@@ -26,6 +26,35 @@
         <h2>Admin Page ${pageContext.request.userPrincipal.name} | <a onclick="document.forms['logoutForm'].submit()">Logout</a>
         </h2>
     </c:if>
+
+    <c:if test="${!empty listContacts}">
+        <table class="tg">
+            <tr>
+                <th width="30">ID</th>
+                <th width="100">Owner</th>
+                <th width="100">Last Name</th>
+                <th width="100">Middle Name</th>
+                <th width="100">First Name</th>
+                <th width="100">Mobile No</th>
+                <th width="100">Home No</th>
+                <th width="100">Address</th>
+                <th width="100">Email</th>
+            </tr>
+            <c:forEach items="${listContacts}" var="contact">
+                <tr>
+                    <td>${contact.id}</td>
+                    <td>${contact.owner}</td>
+                    <td>${contact.last_name}</td>
+                    <td>${contact.middle_name}</td>
+                    <td>${contact.first_name}</td>
+                    <td>${contact.number_mob}</td>
+                    <td>${contact.number_home}</td>
+                    <td>${contact.address}</td>
+                    <td>${contact.email}</td>
+                </tr>
+            </c:forEach>
+        </table>
+    </c:if>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>

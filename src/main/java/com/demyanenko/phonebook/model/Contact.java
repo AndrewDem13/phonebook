@@ -1,13 +1,17 @@
 package com.demyanenko.phonebook.model;
 
+import org.hibernate.annotations.Proxy;
+
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "contacts")
-public class Contact {
+public class Contact implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
     @Column(name = "owner")
@@ -16,8 +20,8 @@ public class Contact {
     @Column(name = "last_name")
     private String last_name;
 
-    @Column(name = "fist_name")
-    private String fist_name;
+    @Column(name = "first_name")
+    private String first_name;
 
     @Column(name = "middle_name")
     private String middle_name;
@@ -69,12 +73,12 @@ public class Contact {
         this.last_name = last_name;
     }
 
-    public String getFist_name() {
-        return fist_name;
+    public String getFirst_name() {
+        return first_name;
     }
 
-    public void setFist_name(String fist_name) {
-        this.fist_name = fist_name;
+    public void setFirst_name(String first_name) {
+        this.first_name = first_name;
     }
 
     public String getMiddle_name() {

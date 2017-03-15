@@ -1,10 +1,11 @@
 package com.demyanenko.phonebook.controller;
 
+import com.demyanenko.phonebook.model.Contact;
 import com.demyanenko.phonebook.model.User;
-import com.demyanenko.phonebook.service.SecurityService;
+import com.demyanenko.phonebook.service.ContactService;
 import com.demyanenko.phonebook.service.UserService;
-import com.demyanenko.phonebook.validator.UserValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -15,56 +16,43 @@ import org.springframework.web.bind.annotation.RequestMethod;
 @Controller
 public class AppController {
     @Autowired
+    @Qualifier(value = "userService")
     private UserService userService;
 
     @Autowired
-    private SecurityService securityService;
+    @Qualifier(value = "contactService")
+    private ContactService contactService;
 
-    @Autowired
-    private UserValidator userValidator;
 
     @RequestMapping(value = "/registration", method = RequestMethod.GET)
     public String registration(Model model) {
         model.addAttribute("userForm", new User());
-
         return "registration";
     }
 
     @RequestMapping(value = "/registration", method = RequestMethod.POST)
-    public String registration(@ModelAttribute("userForm") User userForm, BindingResult bindingResult, Model model) {
-        userValidator.validate(userForm, bindingResult);
-
-        if (bindingResult.hasErrors()) {
-            return "registration";
-        }
-
+    public String registration(@ModelAttribute("userForm") User userForm, Model model) {
         userService.save(userForm);
-
-        securityService.autoLogin(userForm.getLogin() , userForm.getConfirmPassword());
-
         return "redirect:/welcome";
-    }
-
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public String login(Model model, String error, String logout) {
-        if (error != null) {
-            model.addAttribute("error", "Username or password is incorrect.");
-        }
-
-        if (logout != null) {
-            model.addAttribute("message", "Logged out successfully.");
-        }
-
-        return "login";
     }
 
     @RequestMapping(value = {"/", "/welcome"}, method = RequestMethod.GET)
     public String welcome(Model model) {
+        model.addAttribute("contactForm", new Contact());
         return "welcome";
     }
 
-    @RequestMapping(value = "/admin", method = RequestMethod.GET)
-    public String admin(Model model) {
-        return "admin";
+    @RequestMapping(value = {"/welcome/add"}, method = RequestMethod.POST)
+    public String welcome(@ModelAttribute("contactForm") Contact contactForm, BindingResult bindingResult, Model model) {
+        if (!bindingResult.hasErrors()) {
+            contactService.addContact(contactForm);
+        }
+        return "welcome";
+    }
+
+    @RequestMapping(value = "/contacts")
+    public String admin(@ModelAttribute("owner")String owner, Model model) {
+        model.addAttribute("listContacts", contactService.listContacts(owner));
+        return "contacts";
     }
 }
